@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brewers Community Foundation</title>
+
+<link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+<header>
+
+<div class="navbar">
+
+<div class="logo">
+Brewers Community Foundation
+</div>
+
+<nav>
+
+<a href="#home" class="nav-link">Home</a>
+<a href="#history" class="nav-link">History</a>
+<a href="#impact" class="nav-link">Impact</a>
+<a href="#events" class="nav-link">Events</a>
+<a href="#grant" class="nav-link">Grant</a>
+<a href="#donation" class="nav-link">Donate</a>
+
+</nav>
+
+<div class="header-right">
+
+<input type="text" placeholder="Search..." class="search-bar">
+
+<a href="#donation" class="donate-btn">
+Donate Now
+</a>
+
+</div>
+
+</div>
+
+</header>
+
+
+<!-- HERO / TITLE -->
+
+<section id="home" class="hero">
+
+<h1>Brewers Community Foundation</h1>
+
+</section>
+
+
+<!-- ORIGINAL CAROUSEL -->
+
+<section class="carousel-wrapper">
+
+<div class="carousel-container">
+
+<div class="slide active">
+
+<img src="https://images.unsplash.com/photo-1574629810360-7efbbe195018?q=80&w=1600">
+
+<div class="impact-story">
+
+<h3>Youth Development Impact</h3>
+
+<p>
+Over 3,000 local youth gained access to mentorship programs.
+</p>
+
+</div>
+
+</div>
+
+
+<div class="slide">
+
+<img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=1600">
+
+<div class="impact-story">
+
+<h3>Community Partnerships</h3>
+
+<p>
+Partnered with 45 organizations across Milwaukee County.
+</p>
+
+</div>
+
+</div>
+
+
+<div class="slide">
+
+<img src="https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?q=80&w=1600">
+
+<div class="impact-story">
+
+<h3>Healthcare Support</h3>
+
+<p>
+Funded 597 life-saving procedures for families in need.
+</p>
+
+</div>
+
+</div>
+
+
+<button class="prev">&#10094;</button>
+<button class="next">&#10095;</button>
+
+</div>
+
+</section>
+
+
+<!-- HISTORY -->
+
+<section id="history" class="history">
+
+<h2>History of Brewers Community Foundation</h2>
+
+<p>
+
+The Brewers Community Foundation has been dedicated to making a difference since 2008.
+Our mission is to provide support and resources to those in need.
+Through generosity we have touched countless lives across Wisconsin.
+
+</p>
+
+</section>
+
+
+<!-- IMPACT DASHBOARD -->
+
+<section id="impact" class="dashboard">
+
+
+<div class="dash-card">
+
+<h3>Donation Impact Tracker</h3>
+
+<p><span class="big">3245</span> Families Helped</p>
+
+<p><span class="big">785</span> Scholarships Awarded</p>
+
+<p><span class="big">597</span> Procedures Funded</p>
+
+</div>
+
+
+
+<div class="dash-card">
+
+<h3>How to Donate</h3>
+
+<p>
+Make a secure online donation or mail a check to:
+</p>
+
+<p>
+Brewers Community Foundation<br>
+P.O Box 1234<br>
+Milwaukee WI
+</p>
+
+<button>Make a Donation</button>
+
+</div>
+
+
+
+<div class="dash-card">
+
+<h3>Join our Color Run</h3>
+
+<p>
+Register today and support youth programs.
+</p>
+
+<button>Learn More</button>
+
+</div>
+
+
+
+<div class="dash-card">
+
+<h3>Find Help Near You</h3>
+
+<button class="pill">Milwaukee Foundation</button>
+<button class="pill">Madison Foundation</button>
+<button class="pill">Green Bay Foundation</button>
+
+</div>
+
+
+
+<div class="dash-card">
+
+<h3>Brewers Game Score</h3>
+
+<p>MIL 5 - CHC 3</p>
+
+<button>Refresh Score</button>
+
+</div>
+
+</section>
+
+
+
+<!-- EVENTS -->
+
+<section id="events" class="section">
+
+<h2>Upcoming Events</h2>
+
+<div class="event-box">
+
+<h3>Annual Community Fundraiser</h3>
+
+<p>📍 Milwaukee WI</p>
+
+<p>📅 April 22 2026</p>
+
+<button>Learn More</button>
+
+</div>
+
+</section>
+
+
+
+<!-- GRANT -->
+
+<section id="grant" class="section">
+
+<h2>Grant Application</h2>
+
+<form id="grantForm">
+
+<input type="text" placeholder="Organization Name" required>
+
+<input type="email" placeholder="Contact Email" required>
+
+<input type="number" placeholder="Requested Amount ($)" required>
+
+<textarea placeholder="Describe your project..." required></textarea>
+
+<button type="submit">Submit Application</button>
+
+</form>
+
+<p id="grantMessage"></p>
+
+</section>
+
+
+
+<!-- DONATION -->
+
+<section id="donation" class="section">
+
+<h2>Donation Form</h2>
+
+<form id="donationForm">
+
+<input type="text" id="donorName" placeholder="Full Name" required>
+
+<input type="email" placeholder="Email Address" required>
+
+<input type="number" id="donationAmount" placeholder="Donation Amount ($)" required>
+
+<button type="submit">Submit Donation</button>
+
+</form>
+
+<p id="donationMessage"></p>
+
+</section>
+
+
+
+<section id="contact" class="section">
+
+<h2>Contact Us</h2>
+
+<p>Email: info@brewersfoundation.org</p>
+
+<p>Phone: (414) 555-1234</p>
+
+</section>
+
+
+
+<footer>
+
+<p>© 2026 Brewers Community Foundation</p>
+
+</footer>
+
+<script src="main.js"></script>
+
+</body>
+
+</html>
