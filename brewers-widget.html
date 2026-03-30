@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Brewers Score Widget</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: transparent;
+    }
+
+    /* ── Floating button ── */
+    #brew-btn {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: #0a2351;
+      border: 2px solid #b6922e;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      z-index: 9998;
+    }
+
+    #brew-btn:hover {
+      transform: scale(1.08);
+      box-shadow: 0 6px 28px rgba(0,0,0,0.5);
+    }
+
+    #brew-btn svg {
+      width: 34px;
+      height: 34px;
+    }
+
+    /* live pulse ring */
+    #live-ring {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      border: 2px solid #c8f135;
+      z-index: 9997;
+      opacity: 0;
+      animation: none;
+      pointer-events: none;
+    }
+
+    #live-ring.active {
+      opacity: 1;
+      animation: ringPulse 1.6s ease-out infinite;
+    }
+
+    @keyframes ringPulse {
+      0%   { transform: scale(1);    opacity: 0.8; }
+      100% { transform: scale(1.45); opacity: 0; }
+    }
+
+    /* ── Pop-up panel ── */
+    #brew-popup {
+      position: fixed;
+      bottom: 100px;
+      right: 24px;
+      width: 300px;
+      max-height: calc(100vh - 120px);
+      display: flex;
+      flex-direction: column;
+      background: #0a1628;
+      border: 1px solid #b6922e;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.6);
+      z-index: 9999;
+      transform: scale(0.88) translateY(12px);
+      transform-origin: bottom right;
+      opacity: 0;
+      pointer-events: none;
+      transition: transform 0.22s cubic-bezier(0.34,1.56,0.64,1), opacity 0.18s ease;
+    }
+
+    #brew-popup.open {
+      transform: scale(1) translateY(0);
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    /* header */
+    .popup-header {
+      background: #0a2351;
+      padding: 14px 16px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(182,146,46,0.3);
+    }
+
+    .popup-header-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .team-logo-circle {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #132d5e;
+      border: 1.5px solid #b6922e;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .popup-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.15rem;
+      letter-spacing: 0.08em;
+      color: #e8d5a3;
+      line-height: 1;
+    }
+
+    .popup-subtitle {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.62rem;
+      color: #7a8fa8;
+      letter-spacing: 0.06em;
+      margin-top: 2px;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      color: #7a8fa8;
+      cursor: pointer;
+      font-size: 1.1rem;
+      line-height: 1;
+      padding: 2px 4px;
+      border-radius: 4px;
+      transition: color 0.15s;
+    }
+
+    .close-btn:hover { color: #e8d5a3; }
+
+    /* score card */
+    .score-card {
+      background: #0d1e3a;
+      border: 1px solid rgba(182,146,46,0.2);
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin-bottom: 10px;
+    }
+
+    .game-status-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+
+    .status-pill {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 20px;
+      background: rgba(182,146,46,0.15);
+      color: #b6922e;
+    }
+
+    .status-pill.live {
+      background: rgba(239,68,68,0.15);
+      color: #f87171;
+    }
+
+    .status-pill.final {
+      background: rgba(200,241,53,0.1);
+      color: #c8f135;
+    }
+
+    .status-pill.upcoming {
+      background: rgba(122,143,168,0.15);
+      color: #7a8fa8;
+    }
+
+    .live-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #f87171;
+      animation: blink 1.2s ease-in-out infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.2; }
+    }
+
+    .matchup {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .team-side {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .team-abbr {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.6rem;
+      letter-spacing: 0.06em;
+      color: #c8d8ee;
+      line-height: 1;
+    }
+
+    .team-abbr.brewers { color: #e8d5a3; }
+
+    .team-full {
+      font-size: 0.65rem;
+      color: #7a8fa8;
+      text-align: center;
+    }
+
+    .score-display {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.6rem;
+      color: #4a6080;
+      letter-spacing: 0.04em;
+      line-height: 1;
+    }
+
+    .score-display.winner { color: #c8f135; }
+    .score-display.brewers-score { color: #e8d5a3; }
+    .score-display.brewers-score.winner { color: #c8f135; }
+
+    .score-vs {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .vs-sep {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      color: #3a4f68;
+    }
+
+    .score-row {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    /* no game state */
+    .no-game {
+      text-align: center;
+      padding: 1rem 0;
+      color: #7a8fa8;
+      font-size: 0.8rem;
+      line-height: 1.6;
+    }
+
+    .no-game strong {
+      display: block;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.1rem;
+      letter-spacing: 0.06em;
+      color: #e8d5a3;
+      margin-bottom: 4px;
+    }
+
+    /* next game */
+    .next-game-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 12px;
+      background: #0d1e3a;
+      border: 1px solid rgba(182,146,46,0.15);
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+
+    .next-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.62rem;
+      color: #7a8fa8;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+    }
+
+    .next-val {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      color: #e8d5a3;
+    }
+
+    /* record */
+    .record-row {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      padding-top: 4px;
+    }
+
+    .record-item {
+      text-align: center;
+    }
+
+    .record-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.2rem;
+      color: #e8d5a3;
+      letter-spacing: 0.04em;
+      line-height: 1;
+    }
+
+    .record-lbl {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.58rem;
+      color: #7a8fa8;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .divider {
+      width: 1px;
+      background: rgba(182,146,46,0.2);
+      align-self: stretch;
+    }
+
+    /* footer */
+    .popup-footer {
+      padding: 8px 16px 12px;
+      text-align: center;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.6rem;
+      color: #3a4f68;
+      letter-spacing: 0.05em;
+    }
+
+    .loading-text {
+      text-align: center;
+      padding: 1.5rem;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      color: #7a8fa8;
+      letter-spacing: 0.06em;
+    }
+
+    /* scrollable body */
+    .popup-body {
+      flex: 1;
+      min-height: 0;
+      max-height: 420px;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: #1c2e4a transparent;
+    }
+
+    .popup-body::-webkit-scrollbar { width: 4px; }
+    .popup-body::-webkit-scrollbar-track { background: transparent; }
+    .popup-body::-webkit-scrollbar-thumb { background: #1c2e4a; border-radius: 4px; }
+
+    /* recent results */
+    .section-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.6rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #3a4f68;
+      margin: 12px 0 6px;
+    }
+
+    .recent-game {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 7px 10px;
+      border-radius: 8px;
+      background: #0d1e3a;
+      border: 1px solid rgba(182,146,46,0.1);
+      margin-bottom: 5px;
+    }
+
+    .recent-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .wl-badge {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 0.85rem;
+      width: 20px;
+      text-align: center;
+    }
+
+    .wl-badge.W { color: #c8f135; }
+    .wl-badge.L { color: #f87171; }
+
+    .recent-opp {
+      font-size: 0.72rem;
+      color: #7a8fa8;
+    }
+
+    .recent-opp span {
+      color: #c8d8ee;
+      font-weight: 500;
+    }
+
+    .recent-score {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 0.95rem;
+      letter-spacing: 0.04em;
+      color: #c8d8ee;
+    }
+
+    .recent-date {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.58rem;
+      color: #3a4f68;
+      text-align: right;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Live pulse ring -->
+  <div id="live-ring"></div>
+
+  <!-- Floating button -->
+  <button id="brew-btn" onclick="togglePopup()" title="Brewers Score">
+    <!-- Baseball glove / mitt icon in Brewers gold -->
+    <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Baseball -->
+      <circle cx="20" cy="20" r="15" fill="#f5f0e8" stroke="#b6922e" stroke-width="1.5"/>
+      <!-- Stitches left -->
+      <path d="M14 13 Q11 17 12 21 Q13 25 16 27" stroke="#c0392b" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+      <!-- Stitches right -->
+      <path d="M26 13 Q29 17 28 21 Q27 25 24 27" stroke="#c0392b" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+      <!-- M for Milwaukee -->
+      <text x="20" y="23" font-family="'Bebas Neue', sans-serif" font-size="11" fill="#0a2351" text-anchor="middle" font-weight="bold">MIL</text>
+    </svg>
+  </button>
+
+  <!-- Pop-up panel -->
+  <div id="brew-popup">
+    <div class="popup-header">
+      <div class="popup-header-left">
+        <div class="team-logo-circle">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+            <circle cx="11" cy="11" r="10" fill="#0a2351"/>
+            <text x="11" y="15" font-family="'Bebas Neue',sans-serif" font-size="9" fill="#b6922e" text-anchor="middle">MIL</text>
+          </svg>
+        </div>
+        <div>
+          <div class="popup-title">Milwaukee Brewers</div>
+          <div class="popup-subtitle" id="popup-date">—</div>
+        </div>
+      </div>
+      <button class="close-btn" onclick="togglePopup()">✕</button>
+    </div>
+
+    <div class="popup-body" id="popup-body">
+      <div style="padding:16px"><div class="loading-text">LOADING SCORE...</div></div>
+    </div>
+
+    <div class="popup-footer" id="popup-footer">Updated —</div>
+  </div>
+
+  <script>
+    // ── CONFIG ──────────────────────────────────────
+    var BREWERS_ID  = 158; // Milwaukee Brewers — MLB Stats API ID
+    var isOpen      = false;
+    var gameData    = null;
+    var recentGames = [];
+    var record      = null;
+    var refreshTimer = null;
+
+    // ── TOGGLE ──────────────────────────────────────
+    function togglePopup() {
+      isOpen = !isOpen;
+      document.getElementById('brew-popup').classList.toggle('open', isOpen);
+    }
+
+    // ── HELPERS ─────────────────────────────────────
+    function todayStr() {
+      var d = new Date();
+      return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+    }
+
+    function dateOffset(base, days) {
+      var d = new Date(base + 'T12:00:00');
+      d.setDate(d.getDate() + days);
+      return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+    }
+
+    function formatTime(iso) {
+      return new Date(iso).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZoneName: 'short' });
+    }
+
+    function formatDate(iso) {
+      return new Date(iso).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+    }
+
+    function shortDate(iso) {
+      return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    }
+
+    function getStatus(game) {
+      var s = (game && game.status && game.status.abstractGameState) || 'Preview';
+      if (s === 'Final') return 'final';
+      if (s === 'Live')  return 'live';
+      return 'upcoming';
+    }
+
+    function getTeams(game) {
+      var isHome = !!(game.teams && game.teams.home && game.teams.home.team && game.teams.home.team.id === BREWERS_ID);
+      return { brew: isHome ? game.teams.home : game.teams.away,
+               opp:  isHome ? game.teams.away : game.teams.home,
+               isHome: isHome };
+    }
+
+    // ── LIVE RING ────────────────────────────────────
+    function updateLiveRing() {
+      var ring = document.getElementById('live-ring');
+      if (ring) ring.classList.toggle('active', !!(gameData && getStatus(gameData) === 'live'));
+    }
+
+    // ── RENDER ───────────────────────────────────────
+    function render() {
+      var body   = document.getElementById('popup-body');
+      var footer = document.getElementById('popup-footer');
+      var dateEl = document.getElementById('popup-date');
+      if (!body) return;
+
+      var now = new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+      if (footer) footer.textContent = 'Updated ' + now + ' \u00b7 refreshes every 60s';
+
+      var recHtml = record ? `
+        <div class="record-row">
+          <div class="record-item"><div class="record-num">${record.wins}</div><div class="record-lbl">Wins</div></div>
+          <div class="divider"></div>
+          <div class="record-item"><div class="record-num">${record.losses}</div><div class="record-lbl">Losses</div></div>
+          <div class="divider"></div>
+          <div class="record-item"><div class="record-num">${record.pct}</div><div class="record-lbl">PCT</div></div>
+        </div>` : '';
+
+      var recentHtml = recentGames.length > 0 ? `
+        <div class="section-label">Recent results</div>
+        ${recentGames.map(g => {
+          const { brew, opp, isHome } = getTeams(g);
+          if (!brew || !opp) return '';
+          const won     = brew.isWinner === true;
+          const oppAbbr = opp.team?.abbreviation || '???';
+          return `<div class="recent-game">
+            <div class="recent-left">
+              <div class="wl-badge ${won?'W':'L'}">${won?'W':'L'}</div>
+              <div class="recent-opp">${isHome?'vs':'@'} <span>${oppAbbr}</span></div>
+            </div>
+            <div style="text-align:right">
+              <div class="recent-score">${brew.score||0}\u2013${opp.score||0}</div>
+              <div class="recent-date">${shortDate(g.gameDate)}</div>
+            </div>
+          </div>`;
+        }).join('')}` : '';
+
+      if (!gameData) {
+        if (dateEl) dateEl.textContent = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        body.innerHTML = `<div style="padding:16px">
+          <div class="no-game"><strong>No game today</strong>Check back on the next game day.</div>
+          ${recHtml}${recentHtml}
+        </div>`;
+        return;
+      }
+
+      const status  = getStatus(gameData);
+      const { brew, opp, isHome } = getTeams(gameData);
+      const brewScore  = brew?.score ?? null;
+      const oppScore   = opp?.score  ?? null;
+      const oppAbbr    = opp?.team?.abbreviation || '???';
+      const oppName    = (opp?.team?.teamName || opp?.team?.name || '').split(' ').pop();
+      const showScores = status !== 'upcoming';
+      const brewWin    = brew?.isWinner === true;
+      const oppWin     = opp?.isWinner  === true;
+
+      let pillClass = 'upcoming', pillText = gameData.gameDate ? formatTime(gameData.gameDate) : 'TBD', liveDotHtml = '';
+      if (status === 'final') { pillClass = 'final'; pillText = 'Final'; }
+      if (status === 'live') {
+        pillClass = 'live';
+        const ls    = gameData.linescore || {};
+        const arrow = ls.inningState === 'Top' ? '▲' : ls.inningState === 'Bottom' ? '▼' : '';
+        pillText    = (`${arrow} ${ls.currentInningOrdinal||''}`).trim() || 'Live';
+        liveDotHtml = `<div class="live-dot"></div>`;
+      }
+
+      if (dateEl) dateEl.textContent = formatDate(gameData.gameDate) + (isHome ? ' · Home' : ' · Away');
+      const nextHtml = status === 'upcoming' ? `
+        <div class="next-game-row">
+          <span class="next-label">Game time</span>
+          <span class="next-val">${formatTime(gameData.gameDate)}</span>
+        </div>` : '';
+
+      body.innerHTML = `<div style="padding:16px">
+        ${nextHtml}
+        <div class="score-card">
+          <div class="game-status-row">${liveDotHtml}<div class="status-pill ${pillClass}">${pillText}</div></div>
+          <div class="matchup">
+            <div class="team-side">
+              <div class="team-abbr brewers">MIL</div>
+              <div class="team-full">Brewers${isHome ? ' · Home' : ' · Away'}</div>
+              ${showScores ? `<div class="score-display brewers-score${brewWin?' winner':''}"> ${brewScore}</div>` : ''}
+            </div>
+            <div class="score-vs"><div class="vs-sep">${showScores ? '' : 'vs'}</div></div>
+            <div class="team-side">
+              <div class="team-abbr">${oppAbbr}</div>
+              <div class="team-full">${oppName}${isHome ? ' · Away' : ' · Home'}</div>
+              ${showScores ? `<div class="score-display${oppWin?' winner':''}"> ${oppScore}</div>` : ''}
+            </div>
+          </div>
+        </div>
+        ${recHtml}${recentHtml}
+      </div>`;
+    }
+
+    // ── FETCH (MLB Stats API) ────────────────────────
+    async function fetchBrewers() {
+      const today = todayStr();
+
+      // 1. Today's game — failure shows "No game today", never crashes
+      try {
+        const res  = await fetch(`https://statsapi.mlb.com/api/v1/schedule?sportId=1&date=${today}&teamId=${BREWERS_ID}&hydrate=team,linescore`);
+        const data = await res.json();
+        const games = data.dates?.[0]?.games || [];
+        gameData = games.find(g => g.gameType === 'R') || games[0] || null;
+      } catch(err) {
+        console.warn('[Widget] Game fetch failed:', err);
+        gameData = null;
+      }
+
+      // 2. Record + recent results (last 14 days) — always non-fatal
+      try {
+        const start = dateOffset(today, -30);
+        const r2    = await fetch(`https://statsapi.mlb.com/api/v1/schedule?sportId=1&startDate=${start}&endDate=${today}&teamId=${BREWERS_ID}&gameTypes=R&hydrate=team,linescore`);
+        const d2    = await r2.json();
+        const all   = (d2.dates || []).flatMap(d => d.games || []);
+        const todayGamePk = gameData?.gamePk;
+        const done  = all.filter(g => g.status?.abstractGameState === 'Final' && g.gamePk !== todayGamePk);
+        recentGames = done.slice(-3).reverse();
+
+        if (done.length > 0) {
+          const last = done[done.length - 1];
+          const side = last.teams?.home?.team?.id === BREWERS_ID ? last.teams.home : last.teams.away;
+          const rec  = side?.leagueRecord;
+          if (rec?.wins != null) record = { wins: rec.wins, losses: rec.losses, pct: rec.pct || '.000' };
+        }
+      } catch(err) {
+        console.warn('[Widget] Schedule fetch failed (non-fatal):', err);
+      }
+
+      render();
+      updateLiveRing();
+    }
+
+    // ── INIT ─────────────────────────────────────────
+    function init() {
+      fetchBrewers();
+      clearInterval(refreshTimer);
+      refreshTimer = setInterval(fetchBrewers, 60000);
+
+      // Click outside to close
+      document.addEventListener('click', e => {
+        const popup = document.getElementById('brew-popup');
+        const btn   = document.getElementById('brew-btn');
+        if (isOpen && !popup.contains(e.target) && !btn.contains(e.target)) {
+          isOpen = false;
+          popup.classList.remove('open');
+        }
+      });
+    }
+
+    init();
+  </script>
+
+</body>
+</html>
