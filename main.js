@@ -170,7 +170,7 @@ document.querySelectorAll(".nav-link").forEach(link => {
 const navLinks = document.querySelectorAll(".nav-link");
 
 // All tracked anchors in document order (top to bottom)
-const anchorIds = ["home", "history", "impact", "events", "grant", "donation", "contact"];
+const anchorIds = ["home", "history", "impact", "events", "cups", "grant", "donation", "contact"];
 
 function getAnchorTop(id) {
   const el = document.getElementById(id);
@@ -204,23 +204,7 @@ onScroll(); // run once on load
 
 
 // ── DONATION FORM ────────────────────────────────
-document.getElementById("donationForm").addEventListener("submit", function(e) {
-  e.preventDefault();
-
-  const name   = document.getElementById("donorName").value.trim();
-  const amount = parseFloat(document.getElementById("donationAmount").value);
-  const msg    = document.getElementById("donationMessage");
-
-  if (!amount || amount <= 0) {
-    msg.style.color = "#C0392B";
-    msg.innerText = "Please enter a valid donation amount.";
-    return;
-  }
-
-  msg.style.color = "#1C2E4A";
-  msg.innerText = "Thank you, " + name + "! Your $" + amount.toLocaleString() + " donation makes a real difference.";
-  this.reset();
-});
+// Handled by mondayAPI.js (syncs to Monday.com Donations group)
 
 
 // ── GRANT FORM ───────────────────────────────────
