@@ -320,6 +320,61 @@ async function fetchCarouselItems() {
 
 
 /* ─────────────────────────────────────────────────────────── 
+   SUBMIT DONATION TO MONDAY
+   Same board as grant form — different group (donationGroupId)
+   Columns: address, contactName, phoneNumber, taxId, cashAmount
+   ─────────────────────────────────────────────────────────── */
+async function submitDonationToMonday(fields) {
+  const cfg  = await loadConfig();
+  const cols = cfg.columns;
+  const values = {};
+
+  const fieldMap = {
+    address:     fields.address,
+    contactName: fields.contactName,
+    phoneNumber: fields.phoneNumber,
+    taxId:       fields.taxId,
+    cashAmount:  fields.cashAmount
+  };
+
+  for (const [key, rawValue] of Object.entries(fieldMap)) {
+    const col = cols[key];
+    if (!col) continue;
+    const formatted = formatValue(col.type, rawValue);
+    values[col.id]  = formatted;
+    console.log("[Monday/Donation] " + key + " -> " + col.id + " (" + col.type + "):", formatted);
+  }
+
+  const colVals  = JSON.stringify(values);
+  const safeName = fields.organizationName.replace(/\\/g, "\\\\").replace(/"/g, '\\"');
+  const safeVals = colVals.replace(/\\/g, "\\\\").replace(/"/g, '\\"');
+
+  const query = `
+    mutation {
+      create_item(
+        board_id:      ${cfg.boardId},
+        group_id:      "${cfg.donationGroupId}",
+        item_name:     "${safeName}",
+        column_values: "${safeVals}"
+      ) {
+        id
+        name
+      }
+    }
+  `;
+
+  console.log("[Monday/Donation] Sending query:", query);
+  const data = await mondayRequest(cfg.apiToken, query);
+
+  if (!data || !data.create_item) {
+    throw new Error("Donation item was not created — check boardId and donationGroupId.");
+  }
+
+  return data.create_item;
+}
+
+
+/* ─────────────────────────────────────────────────────────── 
    GRANT FORM HANDLER
    ─────────────────────────────────────────────────────────── */
 window.addEventListener("load", () => {
@@ -367,4 +422,53 @@ window.addEventListener("load", () => {
   });
 
   console.log("[Monday] Grant form ready.");
+});
+
+/* ─────────────────────────────────────────────────────────── 
+   DONATION FORM HANDLER
+   ─────────────────────────────────────────────────────────── */
+window.addEventListener("load", () => {
+  const form = document.getElementById("donationForm");
+  if (!form) { console.warn("[Monday] #donationForm not found."); return; }
+
+  form.addEventListener("submit", async function (e) {
+    e.preventDefault();
+    e.stopImmediatePropagation();
+
+    const inputs = form.querySelectorAll("input");
+    const fields = {
+      organizationName: inputs[0]?.value.trim() || "",
+      address:          inputs[1]?.value.trim() || "",
+      contactName:      inputs[2]?.value.trim() || "",
+      phoneNumber:      inputs[3]?.value.trim() || "",
+      taxId:            inputs[4]?.value.trim() || "",
+      cashAmount:       inputs[5]?.value.trim() || ""
+    };
+
+    for (const [key, val] of Object.entries(fields)) {
+      if (!val) {
+        showToast("error", "Missing Information", "Please fill in all fields before submitting.", 5000);
+        return;
+      }
+    }
+
+    const btn = form.querySelector("button[type='submit']");
+    btn.disabled    = true;
+    btn.textContent = "Submitting\u2026";
+    showToast("loading", "Submitting Donation\u2026", "Sending your donation to our team.");
+
+    try {
+      const item = await submitDonationToMonday(fields);
+      showToast("success", "Donation Submitted!", "Thank you, " + fields.organizationName + "! Your $" + parseFloat(fields.cashAmount).toLocaleString() + " donation has been received. (ID: " + item.id + ")", 8000);
+      form.reset();
+    } catch (err) {
+      console.error("[Monday/Donation] Error:", err);
+      showToast("error", "Submission Failed", err.message || "Something went wrong. Please try again.", 0);
+    } finally {
+      btn.disabled    = false;
+      btn.textContent = "Submit Donation";
+    }
+  });
+
+  console.log("[Monday] Donation form ready.");
 });
