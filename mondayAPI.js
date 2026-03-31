@@ -410,7 +410,7 @@ window.addEventListener("load", () => {
 
     try {
       const item = await submitToMonday(fields);
-      showToast("success", "Application Submitted!", "Your grant request has been received. Our team will be in touch soon. (ID: " + item.id + ")", 8000);
+      showToast("success", "Application Submitted!", "Your grant request has been received. Our team will be in touch soon.", 8000);
       form.reset();
     } catch (err) {
       console.error("[Monday] Error:", err);
@@ -459,7 +459,7 @@ window.addEventListener("load", () => {
 
     try {
       const item = await submitDonationToMonday(fields);
-      showToast("success", "Donation Submitted!", "Thank you, " + fields.organizationName + "! Your $" + parseFloat(fields.cashAmount).toLocaleString() + " donation has been received. (ID: " + item.id + ")", 8000);
+      showToast("success", "Donation Submitted!", "Thank you, " + fields.organizationName + "! Your $" + parseFloat(fields.cashAmount).toLocaleString() + " donation has been received.", 8000);
       form.reset();
     } catch (err) {
       console.error("[Monday/Donation] Error:", err);
