@@ -730,3 +730,120 @@ footer {
   color: rgba(255,255,255,0.50);
   letter-spacing: 0.04em;
 }
+
+/* ══════════════════════════════════════════════════════════
+   50/50 RAFFLE CARD
+   ══════════════════════════════════════════════════════════ */
+.raffle-card {
+  background: var(--navy-deep);
+  border: 1.5px solid var(--gold);
+  color: var(--white);
+  min-width: 190px;
+  text-align: center;
+}
+.raffle-header { margin-bottom: 10px; }
+.raffle-label {
+  font-family: 'Oswald', sans-serif;
+  font-size: 11px; font-weight: 700;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--gold);
+}
+.raffle-logo-row {
+  display: flex; align-items: center; justify-content: center; gap: 7px;
+  background: rgba(255,197,47,0.08);
+  border: 1px solid rgba(255,197,47,0.3);
+  border-radius: 8px; padding: 6px 10px; margin-bottom: 8px;
+}
+.raffle-logo-badge {
+  width: 24px; height: 24px; border-radius: 50%;
+  background: #0a2351; border: 1.5px solid #b6922e;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.raffle-name { font-family: 'Oswald', sans-serif; font-size: 13px; font-weight: 600; color: var(--white); }
+.raffle-game { font-family: 'DM Mono', monospace; font-size: 11px; color: rgba(255,255,255,0.55); margin-bottom: 8px; }
+.raffle-ticket-label { font-family: 'Open Sans', sans-serif; font-size: 11px; color: rgba(255,255,255,0.5); margin-bottom: 2px; }
+.raffle-ticket-num {
+  font-family: 'Oswald', sans-serif; font-size: 32px; font-weight: 700;
+  color: var(--gold); letter-spacing: 0.04em; line-height: 1.1;
+  margin-bottom: 8px; text-shadow: 0 0 20px rgba(255,197,47,0.3);
+}
+.raffle-detail { font-family: 'Open Sans', sans-serif; font-size: 12px; color: rgba(255,255,255,0.6); margin-bottom: 4px; }
+.raffle-detail strong { color: var(--white); }
+.raffle-status { color: var(--gold); font-weight: 600; }
+.raffle-btn {
+  margin-top: 10px; width: 100%;
+  background: var(--gold); color: var(--navy-deep);
+  font-family: 'Open Sans', sans-serif; font-weight: 700; font-size: 13px;
+  border: none; border-radius: 20px; padding: 9px 14px;
+  cursor: pointer; transition: background 0.2s, transform 0.15s;
+  box-shadow: 0 2px 10px rgba(255,197,47,0.25);
+}
+.raffle-btn:hover { background: #FFD556; transform: translateY(-1px); }
+
+/* ══════════════════════════════════════════════════════════
+   CUPS & POPCORN SECTION
+   ══════════════════════════════════════════════════════════ */
+.cups-section {
+  background: linear-gradient(160deg, #0a1628 0%, #0f2040 55%, #0a1628 100%);
+  padding: 72px 24px;
+  border-top: 1px solid rgba(255,197,47,0.2);
+  position: relative; overflow: hidden;
+  scroll-margin-top: 64px;
+}
+.cups-section::before {
+  content: ''; position: absolute;
+  top: -80px; left: 50%; transform: translateX(-50%);
+  width: 700px; height: 700px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,197,47,0.05) 0%, transparent 70%);
+  pointer-events: none;
+}
+.cups-inner { max-width: 900px; margin: 0 auto; text-align: center; position: relative; z-index: 1; }
+.cups-badge-wrap { margin-bottom: 14px; }
+.cups-badge {
+  display: inline-block; font-family: 'DM Mono', monospace;
+  font-size: 11px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--gold); border: 1.5px solid var(--gold); border-radius: 20px;
+  padding: 4px 16px; background: rgba(255,197,47,0.06);
+}
+.cups-title {
+  font-family: 'Oswald', sans-serif; font-weight: 700;
+  font-size: clamp(26px, 4vw, 42px); letter-spacing: 0.04em;
+  color: var(--gold); margin-bottom: 16px; line-height: 1.15;
+}
+.cups-intro {
+  font-family: 'Open Sans', sans-serif; font-size: 14px;
+  color: rgba(255,255,255,0.65); max-width: 680px;
+  margin: 0 auto 40px; line-height: 1.8;
+}
+.cups-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin-bottom: 36px; }
+.cup-card {
+  background: rgba(255,255,255,0.04);
+  border: 1.5px solid rgba(255,197,47,0.3);
+  border-radius: 16px; width: 240px;
+  display: flex; flex-direction: column; align-items: center; overflow: hidden;
+  transition: transform 0.25s ease, border-color 0.25s, box-shadow 0.25s;
+}
+.cup-card:hover { transform: translateY(-6px); border-color: var(--gold); box-shadow: 0 14px 40px rgba(255,197,47,0.15); }
+.cup-card-featured { border-color: rgba(255,197,47,0.6); background: rgba(255,197,47,0.05); box-shadow: 0 0 30px rgba(255,197,47,0.08); }
+.cup-illustration { padding: 20px 20px 4px; width: 140px; height: 180px; display: flex; align-items: flex-end; justify-content: center; }
+.cup-illustration svg { width: 100%; height: 100%; overflow: visible; filter: drop-shadow(0 4px 14px rgba(0,0,0,0.45)); }
+.cup-card-body { padding: 12px 18px 20px; text-align: center; flex: 1; display: flex; flex-direction: column; gap: 8px; width: 100%; }
+.cup-card-body h3 { font-family: 'Oswald', sans-serif; font-size: 20px; font-weight: 700; color: var(--white); letter-spacing: 0.03em; margin: 0; }
+.cup-grant-tag { display: inline-block; font-family: 'Open Sans', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 0.05em; padding: 3px 12px; border-radius: 12px; align-self: center; }
+.cup-tag-baseball    { background: rgba(255,197,47,0.12);  color: var(--gold); border: 1px solid rgba(255,197,47,0.35); }
+.cup-tag-literacy    { background: rgba(100,200,120,0.12); color: #7fe097;     border: 1px solid rgba(100,200,120,0.35); }
+.cup-tag-scholarship { background: rgba(120,160,255,0.12); color: #93b4ff;     border: 1px solid rgba(120,160,255,0.35); }
+.cup-card-body p { font-family: 'Open Sans', sans-serif; font-size: 12.5px; color: rgba(255,255,255,0.65); line-height: 1.65; margin: 0; flex: 1; }
+.cup-btn {
+  margin-top: 6px; background: rgba(255,197,47,0.1); color: var(--gold);
+  border: 1.5px solid rgba(255,197,47,0.5); border-radius: 20px; padding: 8px 16px;
+  font-family: 'Open Sans', sans-serif; font-size: 12px; font-weight: 700;
+  cursor: pointer; transition: background 0.2s, border-color 0.2s, transform 0.15s;
+  width: 100%; box-shadow: none;
+}
+.cup-btn:hover { background: rgba(255,197,47,0.18); border-color: var(--gold); transform: translateY(-1px); box-shadow: 0 4px 14px rgba(255,197,47,0.2); }
+.cup-btn-pop { background: rgba(100,200,120,0.1); color: #7fe097; border-color: rgba(100,200,120,0.4); }
+.cup-btn-pop:hover { background: rgba(100,200,120,0.18); border-color: #7fe097; box-shadow: 0 4px 14px rgba(100,200,120,0.15); }
+.cups-footer { font-family: 'Open Sans', sans-serif; font-size: 13px; color: rgba(255,255,255,0.5); margin: 0; }
+.cups-footer strong { color: var(--gold); font-weight: 700; }
+@media (max-width: 640px) { .cup-card { width: min(280px, 92vw); } .cups-grid { gap: 16px; } }
