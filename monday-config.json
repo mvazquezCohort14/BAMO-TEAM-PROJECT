@@ -1,0 +1,25 @@
+{
+  "apiToken":"eyJhbGciOiJIUzI1NiJ9.eyJ0aWQiOjYzOTE3NjMzOCwiYWFpIjoxMSwidWlkIjo5ODYyNjYxOSwiaWFkIjoiMjAyNi0wMy0zMFQwNDo1MDo0Ni45MDNaIiwicGVyIjoibWU6d3JpdGUiLCJhY3RpZCI6MzMzOTc4OTUsInJnbiI6InVzZTEifQ.fr5y48w__fo4uFVIB4BhxIlyQJo9a8cncUJ7-S7sthY",
+
+  "boardId":       "18402634481",
+  "groupId":       "topics",
+  "donationGroupId": "group_mm1ygnvb",
+
+  "carouselBoardId": "18402766137",
+  "carouselGroupId": "group_mm1x3cjv",
+
+  "columns": {
+    "organizationName": { "id": "name",             "type": "name"    },
+    "address":          { "id": "text_mm1rtyws",    "type": "text"    },
+    "contactName":      { "id": "text_mm1rkyy0",    "type": "text"    },
+    "phoneNumber":      { "id": "phone_mm1wy4mj",   "type": "phone"   },
+    "taxId":            { "id": "numeric_mm1rax8x", "type": "numbers" },
+    "projectTitle":     { "id": "text_mm1rn2yb",    "type": "text"    },
+    "cashAmount":       { "id": "numeric_mm1rfmq2", "type": "numbers" }
+  },
+
+  "carouselColumns": {
+    "impactStory": { "id": "text_mm15r661", "type": "text" },
+    "image":       { "id": "file_mm1xw6ta", "type": "file" }
+  }
+}
