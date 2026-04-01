@@ -116,7 +116,7 @@ nav a[href="#grant"]:hover {
   padding: 7px 14px;
   border-radius: 20px;
   border: 1px solid rgba(255,255,255,0.2);
-  background: rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.313);
   color: var(--white);
   font-family: 'Open Sans', sans-serif;
   font-size: 13px;
@@ -740,6 +740,12 @@ footer {
   color: var(--white);
   min-width: 190px;
   text-align: center;
+}
+.raffle-card h3 {
+  color: var(--white);
+}
+.raffle-card .big {
+  color: var(--gold);
 }
 .raffle-header { margin-bottom: 10px; }
 .raffle-label {
