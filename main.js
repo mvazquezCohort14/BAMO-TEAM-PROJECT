@@ -60,7 +60,7 @@ function buildSlides(items) {
       {
         organization: "Youth Development Impact",
         story: "Over 3,000 local youth gained access to mentorship programs.",
-        imageUrl: "https://images.unsplash.com/photo-1574629810360-7efbbe195018?q=80&w=1600"
+        imageUrl: "https://ulbcnj.org/wp-content/uploads/2022/04/Youth-Education.jpg"
       },
       {
         organization: "Community Partnerships",
@@ -70,7 +70,7 @@ function buildSlides(items) {
       {
         organization: "Healthcare Support",
         story: "Funded 597 life-saving procedures for families in need.",
-        imageUrl: "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?q=80&w=1600"
+        imageUrl: "https://t4.ftcdn.net/jpg/01/38/60/67/360_F_138606762_CqhOSr7I0iUsqM68YBQB3b34MvgKDgfG.jpg"
       }
     ];
   }
